@@ -14,9 +14,10 @@ void main()
 {
 
         pid_t pid;
-	int num;
+	int *numP, num;
 
 	num = 20;
+        numP = &num;
         pid = fork();
 
         if (pid == 0) {
@@ -24,7 +25,7 @@ void main()
 		num = num + 5;
         } else {
                 ParentProcess();
-		printf("	the value of num is: %d\n", num);
+		printf("	the value of num is: %d\n", *numP);
 	}
 }
 
