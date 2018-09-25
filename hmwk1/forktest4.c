@@ -21,7 +21,7 @@ void main()
 
         if (pid == 0) {
                 ChildProcess();
-                printf("        the value of num is: %d\n", num);
+                printf("!!!! the value of num is: %d\n", num);
         } else {
                 ParentProcess();
                 num = num + 5;

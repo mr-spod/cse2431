@@ -14,19 +14,18 @@ void main()
 {
 
         pid_t pid;
-	int *numP, num;
+	      int num;
 
-	num = 20;
-        numP = &num;
+	      num = 20;
         pid = fork();
 
         if (pid == 0) {
                 ChildProcess();
-		num = num + 5;
+		            num = num + 5;
         } else {
                 ParentProcess();
-		printf("	the value of num is: %d\n", *numP);
-	}
+		            printf("!!!! the value of num is: %d\n", num);
+	      }
 }
 
 void ChildProcess()
