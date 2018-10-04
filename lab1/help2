@@ -1,0 +1,56 @@
+This project helps you understand more and deeper about 
+the process concepts, how to create and terminate process. 
+Also you will get familiar with system calls related to 
+process and file operations. In addition, you are exposed 
+to signal handling in this project. Last but not least, 
+you will have your own baby -- a simple functioning shell
+program with a persistent history feature.
+
+How to Use the Simple Test Cases:
+
+1. Copy `test' directory into your home directory by
+
+$ cp -r test ~/
+
+2. Copy YOUR MODIFIED `shell.c' into the test directory by
+
+$ cp shell.c ~/test/
+
+3. Compile your `shell.c' in test directory, you can use
+makefile if you like, or simply use
+
+$ gcc -g shell.c -o mysh 
+
+Now, if there is no error, you can begin to test your small
+shell, ;-).
+
+$ ./mysh
+
+* Simple Test Cases
+
+----
+COMMAND-> mv readme help 
+Output: The `readme' file in the `test' directory should be
+renamed into `help'.
+----
+
+----
+COMMAND-> cat help 
+Output: The content of this file should be printed onto the
+screen.
+----
+
+----
+COMMAND-> ./mysh
+Output: Start a second `mysh' shell in the first `mysh' shell.
+The command prompt should be waiting for user's input.  When 
+you press `Ctrl+d', you should go back into your first `mysh', 
+still having a "COMMAND-> " waiting for input.
+----
+
+* NOTES
+
+If your small shell can pass the above three test cases, 
+congratulations!  You already have a good start point. Remember,
+I have some hard test cases for grading purpose, so before you submit
+your program, test it carefully.
