@@ -1,0 +1,8 @@
+Author: Sean O'Donnell
+cse2431 lab 2
+
+to compile:
+`gcc -o buffer.o buffer.c -lpthread -lrt`
+
+to run:
+`buff.o 2 5 5` (or your choice of 3 params)
