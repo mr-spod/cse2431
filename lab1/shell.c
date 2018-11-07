@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 /*
-FOR GRADER:
+FOR CSE 2431 GRADER:
 Name: Sean O'Donnell
 Lab 1
 To compile: run `gcc -g shell.c -0 mysh`
@@ -104,17 +104,17 @@ int main(void)
 	 (3) If bkgd == 0, the parent will wait,
 		o/w returns to the setup() function. */
 
-      if ((pid = fork()) < 0) {
+      if ((pid = fork()) < 0) { // call fork to get child process
         printf("ERROR: problem forking a child process\n");
-      } else if (pid == 0) {
+      } else if (pid == 0) { // child process executes the command
         if (execvp(*args, args) < 0) {
           printf("ERROR: exec command failed\n");
         }
-      } else if (bkgd == 0) {
-        while (wait(&status) != pid) {
+      } else if (bkgd == 0) { // parent process waits if bkgd == 0
+        while (wait(&status) != pid) { // wait until the wait function returns the parent pid returned from fork
           printf("waiting...\n");
         }
         printf("parent process finished waiting\n");
-      }
+      } // return to top of loop immediately if parent process & bkgd == 1
     }
 }
