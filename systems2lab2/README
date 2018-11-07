@@ -3,6 +3,7 @@ cse2431 lab 2
 
 to compile:
 `gcc -o buffer.o buffer.c -lpthread -lrt`
+** NOTE: buffer.h must be in the same directory **
 
 to run:
 `buff.o 2 5 5` (or your choice of 3 params)
