@@ -100,7 +100,8 @@ int main(void)
     size_t len = 0;
     ssize_t read;
 
-    int bkgd;             /* Equals 1 if a command is followed by '&', else 0 */
+    /* Equals 1 if a command is followed by '&', else 0 */
+    int bkgd;
     int status;
     pid_t pid;
 
@@ -111,27 +112,34 @@ int main(void)
 
     readHistory(&commandHistory, &commandCount);
 
-    while (1){            /* Program terminates normally inside setup */
+    /* Program terminates normally inside setup */
+    while (1){
 	    bkgd = 0;
       i = 1;
       historyIndex = -1;
 
-	    printf("\n\nCOMMAND-> ");  /* Shell prompt */
+      /* Shell prompt */
+	    printf("\n\nCOMMAND-> ");
       fflush(0);
 
-      setup(inBuffer, args, &bkgd);       /* Get next command */
+      /* Get next command */
+      setup(inBuffer, args, &bkgd);
 
-      if ((pid = fork()) < 0) { // call fork to get child process
+      if ((pid = fork()) < 0) {
+        /* call fork to get child process */
         printf("ERROR: problem forking a child process\n");
-      } else if (pid == 0) { // child process executes the command
+      } else if (pid == 0) {
+        /* child process executes the command */
         executeShellCommand(args, &isHistory, &isR, &historyIndex, commandCount, commandHistory);
-      } else if (bkgd == 0) { // parent process waits if bkgd == 0
+      } else if (bkgd == 0) {
+        /* parent process waits if bkgd == 0 */
         while (wait(&status) != pid) { // wait until the wait function returns the parent pid returned from fork
           printf("waiting...\n");
         }
       }
 
-      if (isHistory == 0) { /* Store the command in the history */
+      if (isHistory == 0) {
+        /* Store the command in the history */
         commandCount++;
         if (isR != 0) {
           strcpy(commandHistory[(commandCount % 10) - 1], commandHistory[historyIndex]);
