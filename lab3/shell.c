@@ -97,7 +97,6 @@ void *executor(void *param) {
   char rr[50], r[50], history[50], h[50], firstTwo[50], first[50];
 
   historyIndex = -1;
-  commandCount = 0;
   strcpy(rr, "rr\n");
   strcpy(history, "history");
   strcpy(h, "h");
