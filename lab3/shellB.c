@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include "shellB.h"
 
-void readHistory(char *commandHistory[10][MAXLINE/2], int *commandCount) {
+void readHistory(char *commandHistory[10][], int *commandCount) {
   int i, j;
   FILE *f;
   char *line = NULL;
@@ -29,7 +29,7 @@ void readHistory(char *commandHistory[10][MAXLINE/2], int *commandCount) {
   }
 }
 
-void writeHistory(char commandHistory[10][MAXLINE/2], int commandCount) {
+void writeHistory(char commandHistory[10][], int commandCount) {
   FILE *f;
   int i;
   f = fopen("commandHistory.txt", "w");
