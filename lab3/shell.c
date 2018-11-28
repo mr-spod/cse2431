@@ -86,14 +86,14 @@ void setup(char inBuffer[], char *args[],int *bkgd)
 
 char *args[MAXLINE/2+1];/* Command line arguments */
 int commandCount;
-char **commandHistory[10];
+char *commandHistory[MAXLINE/2+1][10];
 /* mutex lock */
 pthread_mutex_t mutex;
 pthread_mutex_t historyMutex;
 
 void *executor(void *param) {
-  char **historyArgs, *historyCommand;
-  int historyIndex, i;
+  char **historyArgs, *historyCommand, command[100];
+  int historyIndex, i, j;
   char rr[50], r[50], history[50], h[50], firstTwo[50], first[50];
 
   historyIndex = -1;
@@ -111,9 +111,9 @@ void *executor(void *param) {
       i = commandCount - 9;
     }
     printf("\nHISTORY\n");
-    for (i; i <= commandCount; i++) {
-      printf("%d", i);
-      historyArgs = commandHistory[(i % 10) - 1];
+    for (j = i; j <= commandCount; j++) {
+      printf("%d", j);
+      historyArgs = commandHistory[(j % 10) - 1];
       historyIndex = 0;
       historyCommand = historyArgs[historyIndex];
       while (historyCommand != NULL) {
@@ -154,10 +154,19 @@ void *executor(void *param) {
       /* Most recent command */
       if (commandCount > 0) {
         historyIndex = (commandCount % 10) - 1;
+        printf("command: %s\n", *commandHistory[historyIndex]);
         execvp(*commandHistory[historyIndex], commandHistory[historyIndex]);
       }
-    } else if (execvp(*args, args) < 0) {
-      printf("ERROR: exec command failed\n");
+    } else {
+      i = 0;
+      historyCommand = args[i]
+      while (historyCommand != NULL) {
+        strcpy(command, historyCommand);
+        strcpy(command, " ");
+        i++;
+        historyCommand = args[i];
+      }
+      system(command);
     }
 
     pthread_mutex_lock(&historyMutex);
@@ -226,8 +235,6 @@ int main(void)
 
 
 	    printf("\n\nCOMMAND-> ");  /* Shell prompt */
-      fflush(0);
-
       setup(inBuffer, args, &bkgd);       /* Get next command */
 	/* Fill in the code for these steps:
 	 (1) Fork a child process using fork(),
