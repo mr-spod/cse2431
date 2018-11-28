@@ -226,7 +226,7 @@ int main(void)
         i = commandCount - 9;
         if (i < 1) i = 1;
         for (i; i <= commandCount; i++) {
-          fprintf("%s\n", commandHistory[(i % 10) - 1]);
+          fprintf(f, "%s\n", commandHistory[(i % 10) - 1]);
         }
     }
     fclose(f);
