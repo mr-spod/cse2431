@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include "shellA.h"
 
-void executeShellCommand(char *args[], int *isHistory, int *isR, int *historyIndex, int commandCount, char commandHistory[][]) {
+void executeShellCommand(char *args[], int *isHistory, int *isR, int *historyIndex, int commandCount, char commandHistory[10][MAXLINE/2+1]) {
   char rr[50], r[50], history[50], h[50], firstTwo[50], first[50];
   int i;
   char *historyCommand;
