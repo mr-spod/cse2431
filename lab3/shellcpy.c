@@ -1,5 +1,4 @@
 #include <sys/types.h>
-#include <sys/mman.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -83,29 +82,28 @@ void setup(char inBuffer[], char *args[],int *bkgd)
     args[j] = NULL; /* Just in case the input line was > 80 */
 }
 
-static char commandHistory[10][MAXLINE/2+1];
-static int historyIndex, isHistory, isR;
+char **commandHistory[10];
 
 int main(void)
 {
     char inBuffer[MAXLINE]; /* Input buffer  to hold the command entered */
     char *args[MAXLINE/2+1];/* Command line arguments */
-    char rr[50], r[50], history[50], h[50], firstTwo[50], first[50], command[MAXLINE/2+1];
+    char rr[50], r[50], history[50], h[50], firstTwo[50], first[50];
     // char **commandHistory[10];
     char **historyArgs;
     char *historyCommand;
     int commandCount;
     int i, j;
+    int historyIndex;
 
     int bkgd;             /* Equals 1 if a command is followed by '&', else 0 */
     int status;
     pid_t pid;
 
     historyIndex = -1;
-    isHistory = 0;
-    isR = 0;
     commandCount = 0;
     strcpy(rr, "rr");
+    printf(rr);
     strcpy(history, "history");
     strcpy(h, "h");
 
@@ -120,9 +118,16 @@ int main(void)
       }
       printf("\nCURRENT STORED HISTORY\n");
       for (i; i <= commandCount; i++) {
-        printf("%d ", i);
-        historyCommand = commandHistory[(i % 10) - 1];
-        printf("%s\n", historyCommand);
+        printf("%d", i);
+        historyArgs = commandHistory[(i % 10) - 1];
+        historyIndex = 0;
+        historyCommand = historyArgs[historyIndex];
+        while (historyCommand != NULL) {
+          printf(" %s", historyCommand);
+          historyIndex++;
+          historyCommand = historyArgs[historyIndex];
+        }
+        printf("\n");
       }
       i = 1;
       historyIndex = -1;
@@ -141,22 +146,27 @@ int main(void)
       if ((pid = fork()) < 0) { // call fork to get child process
         printf("ERROR: problem forking a child process\n");
       } else if (pid == 0) { // child process executes the command
-        sprintf(first, "%s", *args);
-        printf("first: %s", first);
         if ((strcmp(history, first) == 0) || (strcmp(h, first) == 0)) {
           /* Print history */
-          isHistory = 1;
           i = 1;
           if (commandCount > 10) {
             i = commandCount - 9;
           }
-          printf("\nHISTORY (starting at %d)\n", i);
+          printf("\nHISTORY\n");
           for (i; i <= commandCount; i++) {
-            printf("%d ", i);
-            historyCommand = commandHistory[(i % 10) - 1];
-            printf("%s\n", historyCommand);
+            printf("%d", i);
+            historyArgs = commandHistory[(i % 10) - 1];
+            historyIndex = 0;
+            historyCommand = historyArgs[historyIndex];
+            while (historyCommand != NULL) {
+              printf(" %s", historyCommand);
+              historyIndex++;
+              historyCommand = historyArgs[historyIndex];
+            }
+            printf("\n");
           }
         } else {
+          sprintf(first, "%s", *args);
           /* Check if they typed r num */
           i = 1;
           historyIndex = -1;
@@ -175,18 +185,16 @@ int main(void)
 
           if (historyIndex >= 0 && historyIndex < commandCount && historyIndex >= commandCount - 9) {
             printf("is r num\n");
-            isR = 1;
             if (commandCount > 0) {
-              printf("command: %s\n", commandHistory[historyIndex]);
-              system(commandHistory[historyIndex]);
+              printf("command: %s\n", *commandHistory[historyIndex]);
+              execvp(*commandHistory[historyIndex], commandHistory[historyIndex]);
             }
           } else if (strcmp(rr, first) == 0) {
             printf("is rr");
-            isR = 1;
             /* Most recent command */
             if (commandCount > 0) {
               historyIndex = (commandCount % 10) - 1;
-              system(commandHistory[historyIndex]);
+              execvp(*commandHistory[historyIndex], commandHistory[historyIndex]);
             }
           } else if (execvp(*args, args) < 0) {
             printf("ERROR: exec command failed\n");
@@ -200,39 +208,10 @@ int main(void)
         }
         printf("parent process finished waiting\n");
 
-
-      } // return to top of loop immediately if parent process & bkgd == 1
-      printf("isHistory: %d", isHistory);
-      if (isHistory == 0) {
         commandCount++;
-
-        if (isR != 0) {
-          printf("\n\nargs being stored: %s\n\n\n", commandHistory[historyIndex]);
-
-          strcpy(commandHistory[(commandCount % 10) - 1], commandHistory[historyIndex]);
-          printf("\n\nstored: %s\n\n\n", commandHistory[(commandCount % 10) - 1]);
-
-          isR = 0;
-        } else {
-          printf("\n\nargs being stored: %s %s\n\n\n", *args, args[1]);
-
-          i = 0;
-          historyCommand = args[i];
-          strcpy(command, historyCommand);
-          i++;
-          historyCommand = args[i];
-          while (historyCommand != NULL) {
-            strcat(command, " ");
-            strcat(command, historyCommand);
-            i++;
-            historyCommand = args[i];
-          }
-          printf("%s\n", command);
-
-          strcpy(commandHistory[(commandCount % 10) - 1], command);
-          printf("\n\nstored: %s\n\n\n", commandHistory[(commandCount % 10) - 1]);
-        }
-      }
-      isHistory = 0;
+        printf("\n\nargs being stored: %s %s\n\n\n", *args, args[1]);
+        commandHistory[(commandCount % 10) - 1] = args;
+        printf("\n\nstored: %s %s\n\n\n", *commandHistory[(commandCount % 10) - 1], commandHistory[(commandCount % 10) - 1][1]);
+      } // return to top of loop immediately if parent process & bkgd == 1
     }
 }

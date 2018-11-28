@@ -141,8 +141,6 @@ int main(void)
       if ((pid = fork()) < 0) { // call fork to get child process
         printf("ERROR: problem forking a child process\n");
       } else if (pid == 0) { // child process executes the command
-        sprintf(first, "%s", *args);
-        printf("first: %s", first);
         if ((strcmp(history, first) == 0) || (strcmp(h, first) == 0)) {
           /* Print history */
           isHistory = 1;
@@ -157,6 +155,7 @@ int main(void)
             printf("%s\n", historyCommand);
           }
         } else {
+          sprintf(first, "%s", *args);
           /* Check if they typed r num */
           i = 1;
           historyIndex = -1;
