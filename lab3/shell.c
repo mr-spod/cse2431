@@ -133,7 +133,8 @@ int main(void)
         executeShellCommand(args, &isHistory, &isR, &historyIndex, commandCount, commandHistory);
       } else if (bkgd == 0) {
         /* parent process waits if bkgd == 0 */
-        while (wait(&status) != pid) { // wait until the wait function returns the parent pid returned from fork
+        while (wait(&status) != pid) {
+          /* wait until the wait function returns the parent pid returned from fork */
           printf("waiting...\n");
         }
       }
