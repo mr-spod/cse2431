@@ -214,18 +214,18 @@ int main(void)
           }
           strcpy(commandHistory[(commandCount % 10) - 1], command);
         }
+        
+        f = fopen("commandHistory", "w");
+        if (f != NULL) {
+            fprintf(f, "%d\n", commandCount);
+            i = commandCount - 9;
+            if (i < 1) i = 1;
+            for (i; i <= commandCount; i++) {
+              fprintf(f, "%s\n", commandHistory[(i % 10) - 1]);
+            }
+        }
+        fclose(f);
       }
       isHistory = 0;
     }
-
-    f = fopen("commandHistory", "w");
-    if (f != NULL) {
-        fprintf(f, "%d\n", commandCount);
-        i = commandCount - 9;
-        if (i < 1) i = 1;
-        for (i; i <= commandCount; i++) {
-          fprintf(f, "%s\n", commandHistory[(i % 10) - 1]);
-        }
-    }
-    fclose(f);
 }
