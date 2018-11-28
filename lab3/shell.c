@@ -116,14 +116,14 @@ int main(void)
     f = fopen("commandHistory.txt", "r");
     if (f != NULL) {
       read = getline(&line, &len, f);
-      if (read == -1) exit();
+      if (read == -1) exit(EXIT_FAILURE);
       commandCount = atoi(line);
       i = commandCount - 9;
       if (i < 1) i = 1;
       for (i; i <= commandCount; i++) {
         read = getline(&line, &len, f);
         historyIndex = (i % 10) - 1;
-        commandHistory[historyIndex] = line;
+        strcpy(commandHistory[historyIndex], line);
       }
     }
 
