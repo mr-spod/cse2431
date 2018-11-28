@@ -115,7 +115,6 @@ int main(void)
 
     f = fopen("commandHistory.txt", "r");
     if (f != NULL) {
-      printf("why am I in here? 118");
       read = getline(&line, &len, f);
       if (read == -1) exit(EXIT_FAILURE);
       commandCount = atoi(line);
@@ -131,7 +130,6 @@ int main(void)
     }
 
     while (1){            /* Program terminates normally inside setup */
-      printf("beginning... 134");
 	    bkgd = 0;
       i = 1;
       historyIndex = -1;
