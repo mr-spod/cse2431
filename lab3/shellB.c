@@ -14,10 +14,12 @@ void readHistory(char *commandHistory[10][MAXLINE/2], int *commandCount) {
   ssize_t read;
 
   f = fopen("commandHistory.txt", "r");
+  printf("file opened");
   if (f != NULL) {
     read = getline(&line, &len, f);
     if (read == -1) exit(EXIT_FAILURE);
     *commandCount = atoi(line);
+    printf("got command count");
     i = *commandCount - 9;
     if (i < 1) i = 1;
     for (i; i <= *commandCount; i++) {
@@ -27,6 +29,7 @@ void readHistory(char *commandHistory[10][MAXLINE/2], int *commandCount) {
     fclose(f);
     if (line) free(line);
   }
+  printf("done reading");
 }
 
 void writeHistory(char commandHistory[10][MAXLINE/2], int commandCount) {
