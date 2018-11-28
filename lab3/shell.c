@@ -1,4 +1,5 @@
 #include <sys/types.h>
+#include <semaphore.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -82,31 +83,122 @@ void setup(char inBuffer[], char *args[],int *bkgd)
     args[j] = NULL; /* Just in case the input line was > 80 */
 }
 
+int commandCount;
 char **commandHistory[10];
+/* mutex lock */
+pthread_mutex_t mutex;
+pthread_mutex_t historyMutex;
+
+void *executor(void *param) {
+  char **historyArgs;
+  char *historyCommand;
+  int historyIndex;
+  char rr[50], r[50], history[50], h[50], firstTwo[50], first[50];
+
+  historyIndex = -1;
+  commandCount = 0;
+  strcpy(rr, "rr\n");
+  strcpy(history, "history");
+  strcpy(h, "h");sprintf(first, "%s", *args);
+
+  pthread_mutex_lock(&mutex);
+  if ((strcmp(history, first) == 0) || (strcmp(h, first) == 0)) {
+    /* Print history */
+    i = 1;
+    if (commandCount > 10) {
+      i = commandCount - 9;
+    }
+    printf("\nHISTORY\n");
+    for (i; i <= commandCount; i++) {
+      printf("%d", i);
+      historyArgs = commandHistory[(i % 10) - 1];
+      historyIndex = 0;
+      historyCommand = historyArgs[historyIndex];
+      while (historyCommand != NULL) {
+        printf(" %s", historyCommand);
+        historyIndex++;
+        historyCommand = historyArgs[historyIndex];
+      }
+      printf("\n");
+    }
+    pthread_mutex_unlock(&mutex);
+  } else {
+
+    /* Check if they typed r num */
+    i = 1;
+    historyIndex = -1;
+    if (commandCount > 10) {
+      i = commandCount - 9;
+    }
+    sprintf(firstTwo, "%s %s", args[0], args[1]);
+    for (i; i <= commandCount; i++) {
+      sprintf(r, "r %d", i);
+      if (strcmp(r, firstTwo) == 0) {
+        historyIndex = (i % 10) - 1;
+      }
+    }
+
+    if (historyIndex >= 0 && historyIndex < commandCount && historyIndex >= commandCount - 9) printf("history index: %d\n", historyIndex);
+    printf("command count: %d\n\n", commandCount);
+
+    if (historyIndex >= 0 && historyIndex < commandCount && historyIndex >= commandCount - 9) {
+      printf("is r num\n");
+      if (commandCount > 0) {
+        printf("command: %s\n", *commandHistory[historyIndex]);
+        execvp(*commandHistory[historyIndex], commandHistory[historyIndex]);
+      }
+    } else if (strcmp(rr, first) == 0) {
+      printf("is rr");
+      /* Most recent command */
+      if (commandCount > 0) {
+        historyIndex = (commandCount % 10) - 1;
+        execvp(*commandHistory[historyIndex], commandHistory[historyIndex]);
+      }
+    } else if (execvp(*args, args) < 0) {
+      printf("ERROR: exec command failed\n");
+    }
+    pthread_mutex_unlock(&mutex);
+
+    pthread_mutex_lock(&historyMutex);
+    printf("hello?");
+    commandCount++;
+    printf("\n\nargs being stored: %s %s\n\n\n", *args, args[1]);
+    commandHistory[(commandCount % 10) - 1] = args;
+    pthread_mutex_unlock(&historyMutex);
+    printf("\n\nstored: %s %s\n\n\n", *commandHistory[(commandCount % 10) - 1], commandHistory[(commandCount % 10) - 1][1]);
+  }
+}
 
 int main(void)
 {
     char inBuffer[MAXLINE]; /* Input buffer  to hold the command entered */
     char *args[MAXLINE/2+1];/* Command line arguments */
-    char rr[50], r[50], history[50], h[50], firstTwo[50], first[50];
     // char **commandHistory[10];
     char **historyArgs;
     char *historyCommand;
-    int commandCount;
     int i, j;
     int historyIndex;
 
     int bkgd;             /* Equals 1 if a command is followed by '&', else 0 */
     int status;
+    int sleepTime;
+
     pid_t pid;
+    pthread_t tid;
+    pthread_attr_t attr;
+
+    sleepTime = 1;
+    /* Get default attribute */
+    pthread_attr_init(&attr);
+    /* init the mutex lock */
+    pthread_mutex_init(&mutex, NULL);
+    pthread_mutex_init(&historyMutex, NULL);
 
     historyIndex = -1;
     commandCount = 0;
-    strcpy(rr, "rr\n");
-    strcpy(history, "history");
-    strcpy(h, "h");
 
     while (1){            /* Program terminates normally inside setup */
+      pthread_mutex_unlock(&mutex);
 
 	    bkgd = 0;
 
@@ -142,75 +234,10 @@ int main(void)
 	 (3) If bkgd == 0, the parent will wait,
 		o/w returns to the setup() function. */
 
-      if ((pid = fork()) < 0) { // call fork to get child process
-        printf("ERROR: problem forking a child process\n");
-      } else if (pid == 0) { // child process executes the command
-        if ((strcmp(history, first) == 0) || (strcmp(h, first) == 0)) {
-          /* Print history */
-          i = 1;
-          if (commandCount > 10) {
-            i = commandCount - 9;
-          }
-          printf("\nHISTORY\n");
-          for (i; i <= commandCount; i++) {
-            printf("%d", i);
-            historyArgs = commandHistory[(i % 10) - 1];
-            historyIndex = 0;
-            historyCommand = historyArgs[historyIndex];
-            while (historyCommand != NULL) {
-              printf(" %s", historyCommand);
-              historyIndex++;
-              historyCommand = historyArgs[historyIndex];
-            }
-            printf("\n");
-          }
-        } else {
-          sprintf(first, "%s", *args);
+      pthread_create(&tid, &attr, executor, NULL);
+      sleep(sleepTime);
+      pthread_mutex_lock(&mutex);
+      printf("parent process finished waiting\n");
 
-          /* Check if they typed r num */
-          i = 1;
-          historyIndex = -1;
-          if (commandCount > 10) {
-            i = commandCount - 9;
-          }
-          sprintf(firstTwo, "%s %s", args[0], args[1]);
-          for (i; i <= commandCount; i++) {
-            sprintf(r, "r %d", i);
-            if (strcmp(r, firstTwo) == 0) {
-              historyIndex = (i % 10) - 1;
-            }
-          }
-          printf("history index: %d\n", historyIndex);
-          printf("command count: %d\n\n", commandCount);
-
-          if (historyIndex >= 0 && historyIndex < commandCount && historyIndex >= commandCount - 9) {
-            printf("is r num\n");
-            if (commandCount > 0) {
-              printf("command: %s\n", *commandHistory[historyIndex]);
-              execvp(*commandHistory[historyIndex], commandHistory[historyIndex]);
-            }
-          } else if (strcmp(rr, first) == 0) {
-            printf("is rr");
-            /* Most recent command */
-            if (commandCount > 0) {
-              historyIndex = (commandCount % 10) - 1;
-              execvp(*commandHistory[historyIndex], commandHistory[historyIndex]);
-            }
-          } else if (execvp(*args, args) < 0) {
-            printf("ERROR: exec command failed\n");
-          }
-          printf("hello?");
-          commandCount++;
-          printf("\n\nargs being stored: %s %s\n\n\n", *args, args[1]);
-          commandHistory[(commandCount % 10) - 1] = args;
-          printf("\n\nstored: %s %s\n\n\n", *commandHistory[(commandCount % 10) - 1], commandHistory[(commandCount % 10) - 1][1]);
-        }
-
-      } else if (bkgd == 0) { // parent process waits if bkgd == 0
-        while (wait(&status) != pid) { // wait until the wait function returns the parent pid returned from fork
-          printf("waiting...\n");
-        }
-        printf("parent process finished waiting\n");
-      } // return to top of loop immediately if parent process & bkgd == 1
     }
 }
