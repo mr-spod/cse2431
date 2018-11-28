@@ -91,11 +91,15 @@ int main(void)
     char inBuffer[MAXLINE]; /* Input buffer  to hold the command entered */
     char *args[MAXLINE/2+1];/* Command line arguments */
     char rr[50], r[50], history[50], h[50], firstTwo[50], first[50], command[MAXLINE/2+1];
-    // char **commandHistory[10];
     char **historyArgs;
     char *historyCommand;
     int commandCount;
     int i, j;
+    FILE *f;
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    int lowestHistoryNum;
 
     int bkgd;             /* Equals 1 if a command is followed by '&', else 0 */
     int status;
@@ -109,40 +113,38 @@ int main(void)
     strcpy(history, "history");
     strcpy(h, "h");
 
-    while (1){            /* Program terminates normally inside setup */
-
-	    bkgd = 0;
-
-      /* Print history */
-      i = 1;
-      if (commandCount > 10) {
-        i = commandCount - 9;
-      }
-      printf("\nCURRENT STORED HISTORY\n");
+    f = fopen("commandHistory.txt", "r");
+    if (f != NULL) {
+      read = getline(&line, &len, f);
+      if (read == -1) exit();
+      commandCount = atoi(line);
+      i = commandCount - 9;
+      if (i < 1) i = 1;
       for (i; i <= commandCount; i++) {
-        printf("%d ", i);
-        historyCommand = commandHistory[(i % 10) - 1];
-        printf("%s\n", historyCommand);
+        read = getline(&line, &len, f);
+        historyIndex = (i % 10) - 1;
+        commandHistory[historyIndex] = line;
       }
+    }
+
+    fclose(f);
+    if (line)
+        free(line);
+
+    while (1){            /* Program terminates normally inside setup */
+	    bkgd = 0;
       i = 1;
       historyIndex = -1;
-
 
 	    printf("\n\nCOMMAND-> ");  /* Shell prompt */
       fflush(0);
 
       setup(inBuffer, args, &bkgd);       /* Get next command */
-	/* Fill in the code for these steps:
-	 (1) Fork a child process using fork(),
-	 (2) The child process will invoke execvp(),
-	 (3) If bkgd == 0, the parent will wait,
-		o/w returns to the setup() function. */
 
       if ((pid = fork()) < 0) { // call fork to get child process
         printf("ERROR: problem forking a child process\n");
       } else if (pid == 0) { // child process executes the command
         sprintf(first, "%s", *args);
-        printf("first: %s", first);
         if ((strcmp(history, first) == 0) || (strcmp(h, first) == 0)) {
           /* Print history */
           isHistory = 1;
@@ -170,18 +172,14 @@ int main(void)
               historyIndex = (i % 10) - 1;
             }
           }
-          printf("history index: %d\n", historyIndex);
-          printf("command count: %d\n\n", commandCount);
 
-          if (historyIndex >= 0 && historyIndex < commandCount && historyIndex >= commandCount - 9) {
-            printf("is r num\n");
+          if (historyIndex >= 0) {
             isR = 1;
             if (commandCount > 0) {
               printf("command: %s\n", commandHistory[historyIndex]);
               system(commandHistory[historyIndex]);
             }
           } else if (strcmp(rr, first) == 0) {
-            printf("is rr");
             isR = 1;
             /* Most recent command */
             if (commandCount > 0) {
@@ -191,31 +189,20 @@ int main(void)
           } else if (execvp(*args, args) < 0) {
             printf("ERROR: exec command failed\n");
           }
-
         }
 
       } else if (bkgd == 0) { // parent process waits if bkgd == 0
         while (wait(&status) != pid) { // wait until the wait function returns the parent pid returned from fork
           printf("waiting...\n");
         }
-        printf("parent process finished waiting\n");
+      }
 
-
-      } // return to top of loop immediately if parent process & bkgd == 1
-      printf("isHistory: %d", isHistory);
       if (isHistory == 0) {
         commandCount++;
-
         if (isR != 0) {
-          printf("\n\nargs being stored: %s\n\n\n", commandHistory[historyIndex]);
-
           strcpy(commandHistory[(commandCount % 10) - 1], commandHistory[historyIndex]);
-          printf("\n\nstored: %s\n\n\n", commandHistory[(commandCount % 10) - 1]);
-
           isR = 0;
         } else {
-          printf("\n\nargs being stored: %s %s\n\n\n", *args, args[1]);
-
           i = 0;
           historyCommand = args[i];
           strcpy(command, historyCommand);
@@ -227,12 +214,20 @@ int main(void)
             i++;
             historyCommand = args[i];
           }
-          printf("%s\n", command);
-
           strcpy(commandHistory[(commandCount % 10) - 1], command);
-          printf("\n\nstored: %s\n\n\n", commandHistory[(commandCount % 10) - 1]);
         }
       }
       isHistory = 0;
     }
+
+    f = fopen("commandHistory", "w");
+    if (f != NULL) {
+        fprintf(f, "%d\n", commandCount);
+        i = commandCount - 9;
+        if (i < 1) i = 1;
+        for (i; i <= commandCount; i++) {
+          fprintf("%s\n", commandHistory[(i % 10) - 1]);
+        }
+    }
+    fclose(f);
 }
