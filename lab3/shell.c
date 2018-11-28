@@ -160,7 +160,6 @@ void *executor(void *param) {
     } else if (execvp(*args, args) < 0) {
       printf("ERROR: exec command failed\n");
     }
-    pthread_mutex_unlock(&mutex);
 
     pthread_mutex_lock(&historyMutex);
     printf("hello?");
@@ -169,6 +168,7 @@ void *executor(void *param) {
     commandHistory[(commandCount % 10) - 1] = args;
     pthread_mutex_unlock(&historyMutex);
     printf("\n\nstored: %s %s\n\n\n", *commandHistory[(commandCount % 10) - 1], commandHistory[(commandCount % 10) - 1][1]);
+    pthread_mutex_unlock(&mutex);
   }
 }
 
@@ -240,6 +240,8 @@ int main(void)
       sleep(sleepTime);
       pthread_mutex_lock(&mutex);
       printf("parent process finished waiting\n");
-
     }
+    /* 6. Release resources, e.g. destroy mutex and semaphores */
+    pthread_mutex_destroy(&mutex);
+    pthread_mutex_destroy(&historyMutex);
 }
