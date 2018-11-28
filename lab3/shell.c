@@ -125,9 +125,9 @@ int main(void)
         historyIndex = (i % 10) - 1;
         strcpy(commandHistory[historyIndex], line);
       }
+      fclose(f);
     }
 
-    fclose(f);
     if (line)
         free(line);
 
