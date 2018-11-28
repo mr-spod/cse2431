@@ -207,7 +207,11 @@ int main(void)
     historyIndex = -1;
     commandCount = 0;
 
-    while (1){            /* Program terminates normally inside setup */
+    while (1){
+
+	    printf("\n\nCOMMAND-> ");  /* Shell prompt */
+      setup(inBuffer, args, &bkgd);       /* Get next command */
+           /* Program terminates normally inside setup */
       pthread_mutex_unlock(&mutex);
 
 	    bkgd = 0;
@@ -233,9 +237,6 @@ int main(void)
       i = 1;
       historyIndex = -1;
 
-
-	    printf("\n\nCOMMAND-> ");  /* Shell prompt */
-      setup(inBuffer, args, &bkgd);       /* Get next command */
 	/* Fill in the code for these steps:
 	 (1) Fork a child process using fork(),
 	 (2) The child process will invoke execvp(),
