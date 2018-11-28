@@ -83,6 +83,7 @@ void setup(char inBuffer[], char *args[],int *bkgd)
     args[j] = NULL; /* Just in case the input line was > 80 */
 }
 
+char *args[MAXLINE/2+1];/* Command line arguments */
 int commandCount;
 char **commandHistory[10];
 /* mutex lock */
@@ -90,16 +91,17 @@ pthread_mutex_t mutex;
 pthread_mutex_t historyMutex;
 
 void *executor(void *param) {
-  char **historyArgs;
-  char *historyCommand;
-  int historyIndex;
+  char **historyArgs, *historyCommand;
+  int historyIndex, i;
   char rr[50], r[50], history[50], h[50], firstTwo[50], first[50];
 
   historyIndex = -1;
   commandCount = 0;
   strcpy(rr, "rr\n");
   strcpy(history, "history");
-  strcpy(h, "h");sprintf(first, "%s", *args);
+  strcpy(h, "h");
+
+  sprintf(first, "%s", *args);
 
   pthread_mutex_lock(&mutex);
   if ((strcmp(history, first) == 0) || (strcmp(h, first) == 0)) {
@@ -172,7 +174,6 @@ void *executor(void *param) {
 int main(void)
 {
     char inBuffer[MAXLINE]; /* Input buffer  to hold the command entered */
-    char *args[MAXLINE/2+1];/* Command line arguments */
     // char **commandHistory[10];
     char **historyArgs;
     char *historyCommand;
