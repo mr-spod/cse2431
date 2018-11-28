@@ -86,7 +86,7 @@ void setup(char inBuffer[], char *args[],int *bkgd)
 
 char *args[MAXLINE/2+1];/* Command line arguments */
 int commandCount;
-char *commandHistory[MAXLINE/2+1][10];
+char **commandHistory[10];
 /* mutex lock */
 pthread_mutex_t mutex;
 pthread_mutex_t historyMutex;
@@ -159,7 +159,7 @@ void *executor(void *param) {
       }
     } else {
       i = 0;
-      historyCommand = args[i]
+      historyCommand = args[i];
       while (historyCommand != NULL) {
         strcpy(command, historyCommand);
         strcpy(command, " ");
