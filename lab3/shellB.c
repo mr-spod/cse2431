@@ -37,7 +37,7 @@ void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
       printf("got line: %s\n", line);
       scrubNewline(line);
       printf("scrubbed newline: %s\n", line);
-      strcpy(*commandHistory[(i % 10) - 1], line);
+      strcpy((*commandHistory)[(i % 10) - 1], line);
       printf("stored a line: %s\n", *commandHistory[(i % 10) - 1]);
       free(line);
     }
