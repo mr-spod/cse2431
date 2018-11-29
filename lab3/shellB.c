@@ -6,10 +6,10 @@
 #include <unistd.h>
 #include "shellB.h"
 
-void readHistory(char *commandHistory[10][MAXLINE/2], int *commandCount) {
+void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
   int i, j;
   FILE *f;
-  char *line = NULL;
+  char line[MAXLINE/2+1];
   size_t len = 0;
   ssize_t read;
 
@@ -35,7 +35,7 @@ void readHistory(char *commandHistory[10][MAXLINE/2], int *commandCount) {
   printf("done reading");
 }
 
-void writeHistory(char commandHistory[10][MAXLINE/2], int commandCount) {
+void writeHistory(char commandHistory[10][MAXLINE/2+1], int commandCount) {
   FILE *f;
   int i;
   char *command;
