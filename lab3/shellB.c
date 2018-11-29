@@ -9,7 +9,7 @@
 void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
   int i, j;
   FILE *f;
-  char line[MAXLINE/2+1];
+  char line[MAXLINE/2+1], newline[5];
   size_t len = 0;
   ssize_t read;
 
@@ -19,13 +19,16 @@ void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
   if (f != NULL) {
     printf("file opened\n");
     fscanf(f, "%[^\n]", &line);
-    printf("read line: %s", line);
+    fscanf(f, "\n", &newline);
+    printf("read line: %s\n", line);
     *commandCount = atoi(line);
     printf("got command count: %d\n", *commandCount);
     i = *commandCount - 9;
     if (i < 1) i = 1;
     for (i; i <= *commandCount; i++) {
+      printf("scanning for index %d\n", i);
       fscanf(f, "%[^\n]", &line);
+      fscanf(f, "\n", &newline);
       strcpy(*commandHistory[(i % 10) - 1], line);
       printf("stored a line: %s\n", *commandHistory[(i % 10) - 1]);
     }
