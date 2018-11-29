@@ -15,7 +15,7 @@ void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
   int i, j;
   FILE *f;
   char *line;
-  char history[10][MAXLINE/2+1];
+  char **history;
   size_t len = 0;
   ssize_t read;
 
