@@ -28,6 +28,7 @@ void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
     for (i; i <= *commandCount; i++) {
       printf("scanning for index %d\n", i);
       fscanf(f, "%[^\n]", &line);
+      printf("scanned line: %s", line);
       fscanf(f, "\n", &newline);
       strcpy(*commandHistory[(i % 10) - 1], line);
       printf("stored a line: %s\n", *commandHistory[(i % 10) - 1]);
