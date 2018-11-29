@@ -11,28 +11,28 @@ void scrubNewline(char *line) {
     line[strlen(line) - 1] = '\0';
 }
 
-void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
+void readHistory(char *cmdHistory[10][MAXLINE/2+1], int *cmdCount) {
   int i, j;
   FILE *f;
   char *line;
-  char history[][MAXLINE/2+1];
+  char history[10][MAXLINE/2+1];
   size_t len = 0;
   ssize_t read;
 
-  history = *commandHistory;
+  history = *cmdHistory;
   line = malloc(MAXLINE/2+1 * sizeof(char));
-  f = fopen("commandHistory.txt", "r");
+  f = fopen("cmdHistory.txt", "r");
   if (f != NULL) {
     printf("file opened\n");
     fgets(line, MAXLINE/2+1, f);
     scrubNewline(line);
     printf("read line: %s\n", line);
-    *commandCount = atoi(line);
+    *cmdCount = atoi(line);
     free(line);
-    printf("got command count: %d\n", *commandCount);
-    i = *commandCount - 9;
+    printf("got command count: %d\n", *cmdCount);
+    i = *cmdCount - 9;
     if (i < 1) i = 1;
-    for (i; i <= *commandCount; i++) {
+    for (i; i <= *cmdCount; i++) {
       line = malloc(MAXLINE/2+1 * sizeof(char));
       printf("scanning for index %d\n", i);
       fgets(line, MAXLINE/2+1, f);
@@ -40,29 +40,29 @@ void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
       scrubNewline(line);
       printf("scrubbed newline: %s\n", line);
       strcpy(history[(i % 10) - 1], line);
-      printf("stored a line: %s\n", *commandHistory[(i % 10) - 1]);
+      printf("stored a line: %s\n", *cmdHistory[(i % 10) - 1]);
       free(line);
     }
     fclose(f);
   }
-  *commandHistory = history;
+  *cmdHistory = history;
   printf("done reading");
 }
 
-void writeHistory(char commandHistory[10][MAXLINE/2+1], int commandCount) {
+void writeHistory(char cmdHistory[10][MAXLINE/2+1], int cmdCount) {
   FILE *f;
   int i;
   char *command;
-  f = fopen("commandHistory.txt", "w");
+  f = fopen("cmdHistory.txt", "w");
   printf("writing...");
   if (f != NULL) {
-    fprintf(f, "%d\n", commandCount);
+    fprintf(f, "%d\n", cmdCount);
     i = 1;
-    if (commandCount > 10) {
-      i = commandCount - 9;
+    if (cmdCount > 10) {
+      i = cmdCount - 9;
     }
-    for (i; i <= commandCount; i++) {
-      command = commandHistory[(i % 10) - 1];
+    for (i; i <= cmdCount; i++) {
+      command = cmdHistory[(i % 10) - 1];
       printf("writing %s", command);
       fprintf(f, "%s\n", command);
     }
