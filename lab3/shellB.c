@@ -11,11 +11,11 @@ void scrubNewline(char *line) {
     line[strlen(line) - 1] = '\0';
 }
 
-void readHistory(char (*cmdHistory)[10][MAXLINE/2+1], int *cmdCount) {
+void readHistory(char (*cmdHistory[10])[MAXLINE/2+1], int *cmdCount) {
   int i, j;
   FILE *f;
   char *line;
-  char (*history)[MAXLINE/2+1];
+  char history[10][MAXLINE/2+1];
   size_t len = 0;
   ssize_t read;
 
