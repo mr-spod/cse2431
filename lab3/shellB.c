@@ -13,7 +13,9 @@ void readHistory(char *commandHistory[10][MAXLINE/2], int *commandCount) {
   size_t len = 0;
   ssize_t read;
 
+  printf("attempting to open..");
   f = fopen("commandHistory.txt", "r");
+  printf("called open");
   if (f != NULL) {
     printf("file opened");
     read = getline(&line, &len, f);
