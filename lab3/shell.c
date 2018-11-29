@@ -86,6 +86,7 @@ void setup(char inBuffer[], char *args[],int *bkgd)
     args[j] = NULL; /* Just in case the input line was > 80 */
 }
 
+char commandHistory[10][MAXLINE/2+1];
 static int historyIndex, isHistory, isR;
 
 int main(void)
