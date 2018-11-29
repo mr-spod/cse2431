@@ -15,9 +15,11 @@ void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
   int i, j;
   FILE *f;
   char *line;
+  char history[10][MAXLINE/2+1];
   size_t len = 0;
   ssize_t read;
 
+  history = *commandHistory;
   line = malloc(MAXLINE/2+1 * sizeof(char));
   f = fopen("commandHistory.txt", "r");
   if (f != NULL) {
@@ -37,12 +39,13 @@ void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
       printf("got line: %s\n", line);
       scrubNewline(line);
       printf("scrubbed newline: %s\n", line);
-      strcpy((*commandHistory)[(i % 10) - 1], line);
+      strcpy(history[(i % 10) - 1], line);
       printf("stored a line: %s\n", *commandHistory[(i % 10) - 1]);
       free(line);
     }
     fclose(f);
   }
+  *commandHistory = history;
   printf("done reading");
 }
 
