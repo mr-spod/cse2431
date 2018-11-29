@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include "shellA.h"
 #include "shellB.h"
+#include "shell.h"
 
 /*
 FOR CSE 2431 GRADER:
@@ -159,7 +160,7 @@ int main(void)
           strcpy(commandHistory[(commandCount % 10) - 1], command);
         }
 
-        writeHistory(commandHistory, commandCount);
+        writeHistory(commandCount);
       }
       isHistory = 0;
     }
