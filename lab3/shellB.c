@@ -30,7 +30,6 @@ void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
       printf("read a line");
     }
     fclose(f);
-    if (line) free(line);
   }
   printf("done reading");
 }
