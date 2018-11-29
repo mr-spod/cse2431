@@ -12,11 +12,10 @@
 FOR CSE 2431 GRADER:
 Name: Sean O'Donnell
 Lab 1
-To compile: run `gcc -g shell.c -0 mysh`
-To run compiled program: `mysh` or `./mysh`
+    To compile: 'make'
+        (see Makefile for details)
+    To run compiled program: 'lab3'
 */
-
-#define MAXLINE 80 /* 80 chars per line, per command, should be enough. */
 
 /** The setup() routine reads in the next command line string storing it in the input buffer.
 The line is separated into distinct tokens using whitespace as delimiters.  Setup also
@@ -93,13 +92,8 @@ int main(void)
 {
     char inBuffer[MAXLINE], command[MAXLINE/2+1]; /* Input buffer  to hold the command entered */
     char *args[MAXLINE/2+1];/* Command line arguments */
-    char **historyArgs;
     char *historyCommand;
     int commandCount, i;
-    FILE *f;
-    char *line = NULL;
-    size_t len = 0;
-    ssize_t read;
 
     /* Equals 1 if a command is followed by '&', else 0 */
     int bkgd;
@@ -111,6 +105,7 @@ int main(void)
     isR = 0;
     commandCount = 0;
 
+    /* Fill commandHistory with contents of commandHistory.txt */
     readHistory(&commandCount);
 
     /* Program terminates normally inside setup */
@@ -144,9 +139,11 @@ int main(void)
         /* Store the command in the history */
         commandCount++;
         if (isR != 0) {
+          /* Copy re-run command to newest buffer spot */
           strcpy(commandHistory[(commandCount % 10) - 1], commandHistory[historyIndex]);
           isR = 0;
         } else {
+          /* put full line of args into command */
           i = 0;
           historyCommand = args[i];
           strcpy(command, historyCommand);
@@ -158,9 +155,10 @@ int main(void)
             i++;
             historyCommand = args[i];
           }
+          /* Copy command to newest buffer spot */
           strcpy(commandHistory[(commandCount % 10) - 1], command);
         }
-
+        /* Update the history file */
         writeHistory(commandCount);
       }
       isHistory = 0;

@@ -7,6 +7,11 @@
 #include "shellB.h"
 #include "shell.h"
 
+/*
+Author: Sean O'Donnell
+See shell.c for compile/run instructions
+*/
+
 /* Remove the hanging newline char at the end of an fgets read */
 void scrubNewline(char *line) {
     line[strlen(line) - 1] = '\0';
@@ -22,29 +27,24 @@ void readHistory(int *cmdCount) {
   line = malloc(MAXLINE/2+1 * sizeof(char));
   f = fopen("commandHistory.txt", "r");
   if (f != NULL) {
-    printf("file opened\n");
+    /* first line of file is the # of commands elapsed */
     fgets(line, MAXLINE/2+1, f);
     scrubNewline(line);
-    printf("read line: %s\n", line);
+    /* update passed pointer value */
     *cmdCount = atoi(line);
     free(line);
-    printf("got command count: %d\n", *cmdCount);
     i = *cmdCount - 9;
     if (i < 1) i = 1;
     for (i; i <= *cmdCount; i++) {
+      /* store each of the following lines in the file into commandHistory */
       line = malloc(MAXLINE/2+1 * sizeof(char));
-      printf("scanning for index %d\n", i);
       fgets(line, MAXLINE/2+1, f);
-      printf("got line: %s\n", line);
       scrubNewline(line);
-      printf("scrubbed newline: %s\n", line);
       strcpy(commandHistory[(i % 10) - 1], line);
-      printf("stored a line: %s\n", commandHistory[(i % 10) - 1]);
       free(line);
     }
     fclose(f);
   }
-  printf("done reading");
 }
 
 void writeHistory(int cmdCount) {
@@ -52,16 +52,16 @@ void writeHistory(int cmdCount) {
   int i;
   char *command;
   f = fopen("commandHistory.txt", "w");
-  printf("writing...");
   if (f != NULL) {
+    /* print the # of commands elapsed */
     fprintf(f, "%d\n", cmdCount);
     i = 1;
     if (cmdCount > 10) {
       i = cmdCount - 9;
     }
     for (i; i <= cmdCount; i++) {
+      /* print the commands in order of oldest to newest */
       command = commandHistory[(i % 10) - 1];
-      printf("writing %s", command);
       fprintf(f, "%s\n", command);
     }
   }
