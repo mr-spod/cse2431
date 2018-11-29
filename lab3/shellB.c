@@ -17,6 +17,7 @@ void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
   if (f != NULL) {
     printf("file opened\n");
     fscanf(f, "%[^\n]", line);
+    fscanf(f, "\n", newline);
     printf("read line: %s\n", line);
     *commandCount = atoi(line);
     printf("got command count: %d\n", *commandCount);
