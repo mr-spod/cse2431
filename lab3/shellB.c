@@ -34,11 +34,12 @@ void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
       line = malloc(MAXLINE/2+1 * sizeof(char));
       printf("scanning for index %d\n", i);
       fgets(line, MAXLINE/2+1, f);
-      printf("got line: %s", line);
+      printf("got line: %s\n", line);
       scrubNewline(line);
+      printf("scrubbed newline: %s\n", line);
       strcpy(*commandHistory[(i % 10) - 1], line);
-      free(line);
       printf("stored a line: %s\n", *commandHistory[(i % 10) - 1]);
+      free(line);
     }
     fclose(f);
   }
