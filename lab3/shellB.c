@@ -36,6 +36,7 @@ void readHistory(char *commandHistory[10][MAXLINE/2], int *commandCount) {
 void writeHistory(char commandHistory[10][MAXLINE/2], int commandCount) {
   FILE *f;
   int i;
+  char *command;
   f = fopen("commandHistory.txt", "w");
   printf("writing...");
   if (f != NULL) {
@@ -45,9 +46,9 @@ void writeHistory(char commandHistory[10][MAXLINE/2], int commandCount) {
       i = commandCount - 9;
     }
     for (i; i <= commandCount; i++) {
-      historyCommand = commandHistory[(i % 10) - 1];
-      printf("writing %s", historyCommand);
-      fprintf(f, "%s\n", historyCommand);
+      command = commandHistory[(i % 10) - 1];
+      printf("writing %s", command);
+      fprintf(f, "%s\n", command);
     }
   }
   fclose(f);
