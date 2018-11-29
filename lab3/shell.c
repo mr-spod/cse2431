@@ -110,7 +110,6 @@ int main(void)
     isR = 0;
     commandCount = 0;
 
-    printf("calling readhistory");
     readHistory(&commandHistory, &commandCount);
 
     /* Program terminates normally inside setup */

@@ -13,13 +13,10 @@ void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
   size_t len = 0;
   ssize_t read;
 
-  printf("attempting to open..\n");
   f = fopen("commandHistory.txt", "r");
-  printf("called open\n");
   if (f != NULL) {
     printf("file opened\n");
     fscanf(f, "%[^\n]", line);
-    fscanf(f, "\n", newline);
     printf("read line: %s\n", line);
     *commandCount = atoi(line);
     printf("got command count: %d\n", *commandCount);
