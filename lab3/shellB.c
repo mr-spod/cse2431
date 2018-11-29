@@ -18,15 +18,14 @@ void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
   printf("called open\n");
   if (f != NULL) {
     printf("file opened\n");
-    read = getline(&line, &len, f);
-    if (read == -1) exit(EXIT_FAILURE);
+    fscanf(f, "%[^\n]", &line)
     printf("read line: %s", line);
     *commandCount = atoi(line);
     printf("got command count: %d\n", *commandCount);
     i = *commandCount - 9;
     if (i < 1) i = 1;
     for (i; i <= *commandCount; i++) {
-      read = getline(&line, &len, f);
+      fscanf(f, "%[^\n]", &line);
       strcpy(*commandHistory[(i % 10) - 1], line);
       printf("stored a line: %s\n", *commandHistory[(i % 10) - 1]);
     }
