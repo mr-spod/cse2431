@@ -47,7 +47,7 @@ void readHistory(int *cmdCount) {
   printf("done reading");
 }
 
-void writeHistory(char cmdHistory[10][MAXLINE/2+1], int cmdCount) {
+void writeHistory(int cmdCount) {
   FILE *f;
   int i;
   char *command;
@@ -60,7 +60,7 @@ void writeHistory(char cmdHistory[10][MAXLINE/2+1], int cmdCount) {
       i = cmdCount - 9;
     }
     for (i; i <= cmdCount; i++) {
-      command = cmdHistory[(i % 10) - 1];
+      command = commandHistory[(i % 10) - 1];
       printf("writing %s", command);
       fprintf(f, "%s\n", command);
     }

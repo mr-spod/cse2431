@@ -129,7 +129,7 @@ int main(void)
         printf("ERROR: problem forking a child process\n");
       } else if (pid == 0) {
         /* child process executes the command */
-        executeShellCommand(args, &isHistory, &isR, &historyIndex, commandCount, commandHistory);
+        executeShellCommand(args, &isHistory, &isR, &historyIndex, commandCount);
       } else if (bkgd == 0) {
         /* parent process waits if bkgd == 0 */
         while (wait(&status) != pid) {
