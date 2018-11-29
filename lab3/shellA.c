@@ -5,6 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "shellA.h"
+#include "shell.c"
 
 void executeShellCommand(char *args[], int *isHistory, int *isR, int *historyIndex, int commandCount) {
   char rr[50], r[50], history[50], h[50], firstTwo[50], first[50];
