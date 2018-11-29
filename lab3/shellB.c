@@ -5,23 +5,22 @@
 #include <string.h>
 #include <unistd.h>
 #include "shellB.h"
+#include "shell.h"
 
 /* Remove the hanging newline char at the end of an fgets read */
 void scrubNewline(char *line) {
     line[strlen(line) - 1] = '\0';
 }
 
-void readHistory(char (*cmdHistory)[][MAXLINE/2+1], int *cmdCount) {
+void readHistory(int *cmdCount) {
   int i, j;
   FILE *f;
   char *line;
-  char *history[MAXLINE/2+1];
   size_t len = 0;
   ssize_t read;
 
-  history = *cmdHistory;
   line = malloc(MAXLINE/2+1 * sizeof(char));
-  f = fopen("cmdHistory.txt", "r");
+  f = fopen("commandHistory.txt", "r");
   if (f != NULL) {
     printf("file opened\n");
     fgets(line, MAXLINE/2+1, f);
@@ -39,13 +38,12 @@ void readHistory(char (*cmdHistory)[][MAXLINE/2+1], int *cmdCount) {
       printf("got line: %s\n", line);
       scrubNewline(line);
       printf("scrubbed newline: %s\n", line);
-      strcpy(history[(i % 10) - 1], line);
-      printf("stored a line: %s\n", *cmdHistory[(i % 10) - 1]);
+      strcpy(commandHistory[(i % 10) - 1], line);
+      printf("stored a line: %s\n", commandHistory[(i % 10) - 1]);
       free(line);
     }
     fclose(f);
   }
-  *cmdHistory = history;
   printf("done reading");
 }
 
@@ -53,7 +51,7 @@ void writeHistory(char cmdHistory[10][MAXLINE/2+1], int cmdCount) {
   FILE *f;
   int i;
   char *command;
-  f = fopen("cmdHistory.txt", "w");
+  f = fopen("commandHistory.txt", "w");
   printf("writing...");
   if (f != NULL) {
     fprintf(f, "%d\n", cmdCount);
