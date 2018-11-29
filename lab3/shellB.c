@@ -13,21 +13,21 @@ void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
   size_t len = 0;
   ssize_t read;
 
-  printf("attempting to open..");
+  printf("attempting to open..\n");
   f = fopen("commandHistory.txt", "r");
-  printf("called open");
+  printf("called open\n");
   if (f != NULL) {
-    printf("file opened");
+    printf("file opened\n");
     read = getline(&line, &len, f);
     if (read == -1) exit(EXIT_FAILURE);
     *commandCount = atoi(line);
-    printf("got command count");
+    printf("got command count\n");
     i = *commandCount - 9;
     if (i < 1) i = 1;
     for (i; i <= *commandCount; i++) {
       read = getline(&line, &len, f);
       strcpy(*commandHistory[(i % 10) - 1], line);
-      printf("read a line");
+      printf("read a line: %s", *commandHistory[(i % 10) - 1]);
     }
     fclose(f);
   }
