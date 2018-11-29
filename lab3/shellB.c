@@ -20,6 +20,7 @@ void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
     printf("file opened\n");
     read = getline(&line, &len, f);
     if (read == -1) exit(EXIT_FAILURE);
+    printf("read line: %s", line);
     *commandCount = atoi(line);
     printf("got command count: %d\n", *commandCount);
     i = *commandCount - 9;
@@ -27,7 +28,7 @@ void readHistory(char *commandHistory[10][MAXLINE/2+1], int *commandCount) {
     for (i; i <= *commandCount; i++) {
       read = getline(&line, &len, f);
       strcpy(*commandHistory[(i % 10) - 1], line);
-      printf("read a line: %s\n", *commandHistory[(i % 10) - 1]);
+      printf("stored a line: %s\n", *commandHistory[(i % 10) - 1]);
     }
     fclose(f);
   }
