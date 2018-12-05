@@ -26,32 +26,34 @@ int matrixB[1000][500];
 int matrixC[1200][500];
 
 void *multiplyMatricesPortion(void *arg) {
+  // fprintf(stderr, "hello?\n");
+  signal(SIGSEGV, handler);
   int i, j, k, upperi, upperj, newval;
-  int param = *((int *) arg);
-  int portion = param % 10;
-  int numPortions = param % 10;
+  // fprintf(stderr, "hello again?\n");
+  int *param = (int *) arg;
+  // fprintf(stderr, "param: %d\n", *param);
+  int portion = *param % 10;
+  int numPortions = *param % 100;
   i = (portion / numPortions) * 1200;
   j = (portion / numPortions) * 500;
   upperi = ((portion + 1) / numPortions) * 1200;
-  printf("portion %d, upperi %d", portion, upperi);
+  // printf("portion %d, upperi %d\n", portion, upperi);
   upperj = ((portion + 1) / numPortions) * 500;
-  printf("upperj %d", upperj);
+  // printf("upperj %d\n", upperj);
 
   for (i; i < upperi; i++) {
     for (j; j < upperj; j++) {
       for (k = 0; k < 1000; k++) {
         newval = matrixA[i][k] * matrixB[k][j];
         if (matrixC[i][j] != newval && matrixC[i][j] != 0) {
-          printf("error: got a different value for same indices. old: %d, new: %d", matrixC[i][j], newval);
-          printf("i: %d, j: %d, k: %d", i, j, k);
-          printf("portion: %d, numPortions: %d", portion, numPortions);
+          printf("error: got a different value for same indices. old: %d, new: %d\n", matrixC[i][j], newval);
+          printf("i: %d, j: %d, k: %d\n", i, j, k);
+          printf("portion: %d, numPortions: %d\n", portion, numPortions);
         }
         matrixC[i][j] = matrixA[i][k] * matrixB[k][j];
       }
     }
   }
-
-  free(arg);
 }
 
 void initializeMatrices() {
@@ -77,9 +79,9 @@ int main(void) {
   signal(SIGSEGV, handler);
 
   pthread_attr_init(&attr);
-  printf("attr init passed\n");
+  // printf("attr init passed\n");
   initializeMatrices();
-  printf("initialized matrices\n");
+  // printf("initialized matrices\n");
 
   for (n = 2; n <= 6; n++) {
     printf("n = %d\n", n);
@@ -87,21 +89,21 @@ int main(void) {
     for (i = 0; i < n; i++) {
       arg = n * 10;
       arg += i;
-      int error = pthread_create(&tid[i], &attr, multiplyMatricesPortion, arg);
-      if (error == 0)
-        printf("thread dispatch successfully\n");
-      else
-        printf("Error %d: could not create thread\n", error);
+      int error = pthread_create(&tid[i], &attr, multiplyMatricesPortion, (void *) &arg);
+      // if (error == 0)
+      //   // printf("thread dispatch successfully\n");
+      // else
+      //   // printf("Error %d: could not create thread\n", error);
     }
     for (i = 0; i < n; i++) {
-      printf("about to call pthread_join on thread %d of %d", i, n);
+      // printf("about to call pthread_join on thread %d of %d\n", i, n);
       int error = pthread_join(tid[i], NULL);
-      if (error == 0)
-        printf("thread joined successfully\n");
-      else
-        printf("Error %d: could not join thread %d of %d", error, i, n);
+      // if (error == 0)
+      //   // printf("thread joined successfully\n");
+      // else
+      //   // printf("Error %d: could not join thread %d of %d\n", error, i, n);
     }
     difference = clock() - before;
-    printf("Running with %d threads took %lu seconds, %lu milliseconds", n, difference / 1000, difference % 1000);
+    printf("Running with %d threads took %lu seconds, %lu milliseconds\n", n, difference / 1000, difference % 1000);
   }
 }
