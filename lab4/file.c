@@ -73,21 +73,20 @@ int main(void) {
       arg = n * 10;
       arg += i;
       int error = pthread_create(&tid[i], &attr, multiplyMatricesPortion, (void *) &arg);
-      // if (error == 0)
-      //   // printf("thread dispatch successfully\n");
-      // else
-      //   // printf("Error %d: could not create thread\n", error);
+      if (error == 0)
+        printf("thread dispatch successfully\n");
+      else
+        printf("Error %d: could not create thread\n", error);
     }
     for (i = 0; i < n; i++) {
       // printf("about to call pthread_join on thread %d of %d\n", i, n);
       int error = pthread_join(tid[i], NULL);
-      // if (error == 0)
-      //   // printf("thread joined successfully\n");
-      // else
-      //   // printf("Error %d: could not join thread %d of %d\n", error, i, n);
+      if (error == 0)
+        printf("thread joined successfully\n");
+      else
+        printf("Error %d: could not join thread %d of %d\n", error, i, n);
     }
     difference = clock() - before;
-    printf("%diff: lu, before: %lu", difference, before);
     printf("Running with %d threads took %lu seconds, %lu milliseconds\n", n, difference / 1000, difference % 1000);
   }
 }
