@@ -87,6 +87,7 @@ int main(void) {
       //   // printf("Error %d: could not join thread %d of %d\n", error, i, n);
     }
     difference = clock() - before;
+    printf("%diff: lu, before: %lu", difference, before);
     printf("Running with %d threads took %lu seconds, %lu milliseconds\n", n, difference / 1000, difference % 1000);
   }
 }
