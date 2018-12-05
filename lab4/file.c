@@ -8,26 +8,11 @@
 #include <unistd.h>
 #include <time.h>
 
-void handler(int sig) {
-  void *array[10];
-  size_t size;
-
-  // get void*'s for all entries on the stack
-  size = backtrace(array, 10);
-
-  // print out all the frames to stderr
-  fprintf(stderr, "Error: signal %d:\n", sig);
-  backtrace_symbols_fd(array, size, STDERR_FILENO);
-  exit(1);
-}
-
 int matrixA[1200][1000];
 int matrixB[1000][500];
 int matrixC[1200][500];
 
 void *multiplyMatricesPortion(void *arg) {
-  // fprintf(stderr, "hello?\n");
-  signal(SIGSEGV, handler);
   int i, j, k, upperi, upperj, newval;
   // fprintf(stderr, "hello again?\n");
   int *param = (int *) arg;
@@ -75,8 +60,6 @@ int main(void) {
   pthread_t tid[6];
   pthread_attr_t attr;
   clock_t before, difference;
-
-  signal(SIGSEGV, handler);
 
   pthread_attr_init(&attr);
   // printf("attr init passed\n");
