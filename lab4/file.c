@@ -8,6 +8,14 @@
 #include <unistd.h>
 #include <omp.h>
 
+/*
+Lab 4
+Author: Sean O'Donnell
+
+Compile: gcc -O1 -Wall -o exec_file file.c -fopenmp -lpthread
+Run: exec_file
+*/
+
 int matrixA[1200][1000];
 int matrixB[1000][500];
 int matrixC[1200][500];
