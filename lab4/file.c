@@ -6,7 +6,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <unistd.h>
-#include <time.h>
+#include <omp.h>
 
 int matrixA[1200][1000];
 int matrixB[1000][500];
@@ -75,7 +75,7 @@ int main(void) {
   int n = 2;
   pthread_t *tid;
   pthread_attr_t attr;
-  clock_t before, difference;
+  double before, difference;
 
   tid = malloc(6 * sizeof(pthread_t));
   pthread_attr_init(&attr);
@@ -84,26 +84,19 @@ int main(void) {
   for (n = 2; n <= 6; n++) {
     initializeMatrices();
     printf("n = %d\n", n);
-    before = clock();
+    before = omp_get_wtime();
     for (i = 0; i < n; i++) {
       argP = malloc(sizeof(int));
       *argP = n * 10;
       *argP += i;
-      int error = pthread_create(&(tid[i]), &attr, multiplyMatricesPortion, (void *) argP);
-      if (error == 0)
-        printf("");
-      else
-        printf("Error %d: could not create thread\n", error);
+      if (pthread_create(&(tid[i]), &attr, multiplyMatricesPortion, (void *) argP) != 0)
+        printf("Error: could not create thread\n");
     }
     for (i = 0; i < n; i++) {
-      // printf("about to call pthread_join on thread %d of %d\n", i, n);
-      int error = pthread_join(tid[i], NULL);
-      if (error == 0) {
-        printf("");
-        difference = clock() - before;
-      }
-      else printf("Error %d: could not join thread %d of %d\n", error, i, n);
+      if (pthread_join(tid[i], NULL) != 0)
+        printf("Error: could not join thread %d of %d\n", i, n);
     }
+    difference = omp_get_wtime() - before;
     free(argP);
     printf("Running with %d threads took %lu seconds, %lu milliseconds\n", n, difference / 1000, difference % 1000);
   }
