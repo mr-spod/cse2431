@@ -98,6 +98,6 @@ int main(void) {
     }
     difference = omp_get_wtime() - before;
     free(argP);
-    printf("Running with %d threads took %lu seconds, %lu milliseconds\n", n, difference / 1000, difference % 1000);
+    printf("Running with %d threads took %f seconds, %f milliseconds, %f\n", n, difference / 1000, difference % 1000, difference);
   }
 }
