@@ -16,33 +16,36 @@ Compile: gcc -O1 -Wall -o exec_file file.c -fopenmp -lpthread
 Run: exec_file
 */
 
-int matrixA[1200][1000];
-int matrixB[1000][500];
-int matrixC[1200][500];
-int matrixCSolution[1200][500];
+#define X 1200
+#define Y 1000
+#define Z 500
+int matrixA[X][Y];
+int matrixB[Y][Z];
+int matrixC[X][Z];
+int matrixCSolution[X][Z];
 
 void *multiplyMatricesPortion(void *arg) {
-  int i, j, k, upperi, upperj, upperk;
+  int i, j, k, upperi, upperj;
   int *param = (int *) arg;
   int portion = *param % 10;
   int numPortions = *param / 10;
-  i = (1200 / numPortions) * portion;
-  j = (500 / numPortions) * portion;
-  k = (1000 / numPortions) * portion;
+  i = (X / numPortions) * portion;
+  j = (Z / numPortions) * portion;
+  k = (Y / numPortions) * portion;
   if (portion == (numPortions - 1)) {
-    upperi = 1200;
-    upperj = 500;
-    upperk = 1000;
+    upperi = X;
+    upperj = Z;
+    upperk = Y;
   } else {
-    upperi = (1200 / numPortions) * (portion + 1);
-    upperj = (500 / numPortions) * (portion + 1);
-    upperk = (1000 / numPortions) * (portion + 1);
+    upperi = (X / numPortions) * (portion + 1);
+    upperj = (Z / numPortions) * (portion + 1);
+    upperk = (Y / numPortions) * (portion + 1);
   }
 
-  for (i; i < upperi; i++) {
-    for (j; j < upperj; j++) {
+  for (i < upperi; i++) {
+    for (j < upperj; j++) {
       matrixC[i][j] = 0;
-      for (k = 0; k < 1000; k++) {
+      for (k = 0; k < Y; k++) {
         matrixC[i][j] += matrixA[i][k] * matrixB[k][j];
       }
       if (matrixC[i][j] != matrixCSolution[i][j]) {
@@ -57,21 +60,21 @@ void *multiplyMatricesPortion(void *arg) {
 
 void initializeMatrices() {
   int i, j, k;
-  for (i = 0; i < 1200; i++) {
-    for (k = 0; k < 1000; k++) {
+  for (i = 0; i < X; i++) {
+    for (k = 0; k < Y; k++) {
       matrixA[i][k] = i + k;
     }
   }
-  for (k = 0; k < 1000; k++) {
-    for (j = 0; j < 500; j++) {
+  for (k = 0; k < Y; k++) {
+    for (j = 0; j < Z; j++) {
       matrixB[k][j] = j;
     }
   }
-  for (i = 0; i < 1200; i++) {
-    for (j = 0; j < 500; j++) {
+  for (i = 0; i < X; i++) {
+    for (j = 0; j < Z; j++) {
       matrixC[i][j] = 0;
       matrixCSolution[i][j] = 0;
-      for (k = 0; k < 1000; k++) {
+      for (k = 0; k < Y; k++) {
         matrixCSolution[i][j] += matrixA[i][k] * matrixB[k][j];
       }
     }
