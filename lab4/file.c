@@ -35,7 +35,6 @@ void *multiplyMatricesPortion(void *arg) {
   } else {
     upperi = (X / numPortions) * (portion + 1);
   }
-  fprintf(stdout, "lower i: %d, upper i: %d\n", i, upperi);
 
   for (; i < upperi; i++) {
     for (j = 0; j < Z; j++) {
@@ -104,6 +103,6 @@ int main(void) {
     }
     difference = omp_get_wtime() - before;
     free(argP);
-    printf("Running with %d threads took %.4f seconds\n", n, difference * 1000);
+    printf("Running with %d threads took %.4f ms\n", n, difference * 1000);
   }
 }
