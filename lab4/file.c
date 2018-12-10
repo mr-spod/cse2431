@@ -39,7 +39,7 @@ void *multiplyMatricesPortion(void *arg) {
   for (i = 0; i < X; i++) {
     for (j = 0; j < Z; j++) {
       matrixC[i][j] = 0;
-      for (k = 0; k < Y; k++) {
+      for (; k < upperk; k++) {
         matrixC[i][j] += matrixA[i][k] * matrixB[k][j];
       }
       if (matrixC[i][j] != matrixCSolution[i][j]) {
