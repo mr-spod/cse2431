@@ -25,22 +25,19 @@ int matrixC[X][Z];
 int matrixCSolution[X][Z];
 
 void *multiplyMatricesPortion(void *arg) {
-  int i, j, k, upperi, upperj;
+  int i, j, k, upperi;
   int *param = (int *) arg;
   int portion = *param % 10;
   int numPortions = *param / 10;
   i = (X / numPortions) * portion;
-  j = (Z / numPortions) * portion;
   if (portion == (numPortions - 1)) {
     upperi = X;
-    upperj = Z;
   } else {
     upperi = (X / numPortions) * (portion + 1);
-    upperj = (Z / numPortions) * (portion + 1);
   }
 
   for (; i < upperi; i++) {
-    for (; j < upperj; j++) {
+    for (j = 0; j < Z; j++) {
       matrixC[i][j] = 0;
       for (k = 0; k < Y; k++) {
         matrixC[i][j] += matrixA[i][k] * matrixB[k][j];
