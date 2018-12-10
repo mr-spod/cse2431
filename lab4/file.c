@@ -42,8 +42,8 @@ void *multiplyMatricesPortion(void *arg) {
     upperk = (Y / numPortions) * (portion + 1);
   }
 
-  for (i < upperi; i++) {
-    for (j < upperj; j++) {
+  for (; i < upperi; i++) {
+    for (; j < upperj; j++) {
       matrixC[i][j] = 0;
       for (k = 0; k < Y; k++) {
         matrixC[i][j] += matrixA[i][k] * matrixB[k][j];
