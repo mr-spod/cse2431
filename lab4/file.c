@@ -31,15 +31,12 @@ void *multiplyMatricesPortion(void *arg) {
   int numPortions = *param / 10;
   i = (X / numPortions) * portion;
   j = (Z / numPortions) * portion;
-  k = (Y / numPortions) * portion;
   if (portion == (numPortions - 1)) {
     upperi = X;
     upperj = Z;
-    upperk = Y;
   } else {
     upperi = (X / numPortions) * (portion + 1);
     upperj = (Z / numPortions) * (portion + 1);
-    upperk = (Y / numPortions) * (portion + 1);
   }
 
   for (; i < upperi; i++) {
