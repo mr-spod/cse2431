@@ -98,13 +98,13 @@ int main(void) {
     for (i = 0; i < n; i++) {
       // printf("about to call pthread_join on thread %d of %d\n", i, n);
       int error = pthread_join(tid[i], NULL);
-      if (error == 0)
+      if (error == 0) {
         printf("");
-      else
-        printf("Error %d: could not join thread %d of %d\n", error, i, n);
+        difference = clock() - before;
+      }
+      else printf("Error %d: could not join thread %d of %d\n", error, i, n);
     }
     free(argP);
-    difference = clock() - before;
     printf("Running with %d threads took %lu seconds, %lu milliseconds\n", n, difference / 1000, difference % 1000);
   }
 }
